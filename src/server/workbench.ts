@@ -182,13 +182,13 @@ export default function (config: IConfig): Router.Middleware {
 			const esm = config.esm || await isESM(config.build.location);
 			console.log('Using ESM loader:', esm);
 			const devCSSModules = esm ? await getDevCssModules(config.build.location) : [];
-			ctx.state.workbench = new Workbench(`${ctx.protocol}://${ctx.host}/static/sources`, true, esm, devCSSModules, builtInExtensions, {
+			ctx.state.workbench = new Workbench(`./static/sources`, true, esm, devCSSModules, builtInExtensions, {
 				...productOverrides,
 				webEndpointUrlTemplate: `${ctx.protocol}://{{uuid}}.${ctx.host}/static/sources`,
 				webviewContentExternalBaseUrlTemplate: `${ctx.protocol}://{{uuid}}.${ctx.host}/static/sources/out/vs/workbench/contrib/webview/browser/pre/`
 			});
 		} else if (config.build.type === 'static') {
-			const baseUrl = `${ctx.protocol}://${ctx.host}/static/build`;
+			const baseUrl = `./static/build`;
 			ctx.state.workbench = new Workbench(baseUrl, false, config.esm, [], [], {
 				webEndpointUrlTemplate: `${ctx.protocol}://{{uuid}}.${ctx.host}/static/build`,
 				webviewContentExternalBaseUrlTemplate: `${ctx.protocol}://{{uuid}}.${ctx.host}/static/build/out/vs/workbench/contrib/webview/browser/pre/`
