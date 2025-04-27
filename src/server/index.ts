@@ -158,6 +158,11 @@ export interface Options {
 	host?: string;
 
 	/**
+	 * The external endpoint url. Defaults to `http://<localhost>:<port>`
+	 */
+	endpoint?: string;
+
+	/**
 	 * The temporary folder for storing the VS Code builds used for running the tests. Defaults to `$CURRENT_WORKING_DIR/.vscode-test-web`.
 	 */
 	testRunnerDataDir?: string;
@@ -191,7 +196,7 @@ export async function runTests(options: Options & { extensionTestsPath: string }
 	const server = await runServer(host, port, config);
 
 	return new Promise(async (s, e) => {
-		const endpoint = `http://${host}:${port}`;
+		const endpoint = options.endpoint ?? `http://${host}:${port}`;
 
 		const configPage = async (page: playwright.Page, browser: playwright.Browser) => {
 			type Severity = 'error' | 'warning' | 'info';
@@ -260,7 +265,7 @@ export async function open(options: Options): Promise<Disposable> {
 	const port = options.port ?? 3000;
 	const server = await runServer(host, port, config);
 
-	const endpoint = `http://${host}:${port}`;
+	const endpoint = options.endpoint ?? `http://${host}:${port}`;
 
 	const context = await openBrowser(endpoint, options);
 	context?.once('close', () => server.close());
@@ -611,7 +616,7 @@ async function cliMain(): Promise<void> {
 	console.log(`${manifest.name}: ${manifest.version}`);
 
 	const options: minimist.Opts = {
-		string: ['extensionDevelopmentPath', 'extensionTestsPath', 'browser', 'browserOption', 'browserType', 'quality', 'version', 'commit', 'waitForDebugger', 'folder-uri', 'permission', 'extensionPath', 'extensionId', 'sourcesPath', 'host', 'port', 'testRunnerDataDir'],
+		string: ['extensionDevelopmentPath', 'extensionTestsPath', 'browser', 'browserOption', 'browserType', 'quality', 'version', 'commit', 'waitForDebugger', 'folder-uri', 'permission', 'extensionPath', 'extensionId', 'sourcesPath', 'host', 'port', 'endpoint', 'testRunnerDataDir'],
 		boolean: ['open-devtools', 'headless', 'hideServerLog', 'printServerLog', 'help', 'verbose', 'coi', 'esm'],
 		unknown: arg => {
 			if (arg.startsWith('-')) {
